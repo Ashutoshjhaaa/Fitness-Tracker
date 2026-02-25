@@ -1,10 +1,13 @@
-import { ArrowLeft, ArrowRight, PersonStanding, ScaleIcon, Target, User } from "lucide-react"
+import { ArrowLeft, ArrowRight, PersonStanding, ScaleIcon, Target, User, Flame } from "lucide-react"
 import { useState } from "react"
 import toast, { Toaster } from "react-hot-toast"
 import { useAppContext } from "../context/AppContext"
-import type { ProfileFormData } from "../types"
+import type { ProfileFormData, UserData } from "../types"
 import Input from "../components/ui/Input"
 import Button from "../components/ui/Button"
+import Slider from "../components/ui/Slider"
+import strapiApi from "../services/strapiApi"
+import { goalOptions } from "../assets/assets"
 
 
  
@@ -21,7 +24,7 @@ import Button from "../components/ui/Button"
     dailyCalorieIntake: 2000,
   })
 
-  const totalSteps = 3;
+  const totalSteps = 4;
 
   const updateField = (field: keyof ProfileFormData, value: string | number)=>{
     setFormData({...formData,[field]: value})
@@ -38,7 +41,15 @@ import Button from "../components/ui/Button"
       const userData = {
         ...formData,
         age: formData.age,
-      }
+        weight: formData.weight,
+        height: formData.height ? formData.height : null,
+        createAt: new Date().toISOString(),
+      };
+      localStorage.setItem('fitnessUser', JSON.stringify(userData));
+      await strapiApi.user.update(user?.id || "", userData as unknown as Partial<UserData>)
+      toast.success("Profile setup complete!")
+      setOnboardingCompleted(true);
+      fetchUser(user?.token || "")
  
   }
 }
@@ -120,13 +131,56 @@ import Button from "../components/ui/Button"
               </div>
             </div>
 
-            </div>
             
+            {/* options */}
 
-           
+            <div className="space-y-4 max-w-lg">
+              {goalOptions.map((option) => (
+                <button 
+                  key={option.value}
+                  onClick={()=>updateField('goal', option.value)}
+                 className={`onboarding-option-btn ${formData.goal === option.value ? 'ring-2 ring-emerald-500' : ''}`}>
+                  <span className="text-base text-slate-700 dark:text-slate-200">{option.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {step === 4 && (
+          <div className="space-y-6 onboarding-wrapper">
+            <div className="flex items-center gap-4 mb-8 mt-12">
+              <div className="size-10 rounded-xl bg-emerald-50 dark:bg-emerald-900/10 border border-emerald-100 dark:border-emerald-800 flex items-center justify-center"><Flame className="size-6 text-emerald-600 dark:text-emerald-400"/></div>
+              <div>
+                <h2 className="text-lg font-semibold text-slate-800 dark:text-white">Set your daily targets</h2>
+                <p className="text-slate-500 dark:text-slate-400 text-sm">Customize your calorie and burn goals.</p>
+              </div>
+            </div>
+            <div className="space-y-8 max-w-2xl">
+              <Slider
+                label="Daily Calorie Intake"
+                min={1200}
+                max={4000}
+                step={100}
+                value={formData.dailyCalorieIntake}
+                onChange={(v) => updateField('dailyCalorieIntake', v)}
+                unit="kcal"
+              />
+              <Slider
+                label="Daily Calorie Burn Goal"
+                min={100}
+                max={1000}
+                step={50}
+                value={formData.dailyCalorieBurn}
+                onChange={(v) => updateField('dailyCalorieBurn', v)}
+                unit="kcal"
+              />
+            </div>
+          </div>
         )}
 
       </div>
+
       {/* Navigation Buttons */}
       <div className="p-6 pb-10 onboarding-wrapper">
         <div className="flex gap-3 lg:justify-end">

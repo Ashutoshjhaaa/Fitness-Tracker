@@ -2,7 +2,7 @@ import { AtSignIcon,  EyeOffIcon,  LockIcon, MailIcon } from "lucide-react"
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { useAppContext } from "../context/AppContext"
-import { Toaster } from "react-hot-toast"
+import toast, { Toaster } from "react-hot-toast"
 
 
 const Login = () => {
@@ -20,10 +20,15 @@ const Login = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    if(state === 'login') {
-      await login({email, password})
-    } else {
-      await signup({username, email, password})
+    try {
+      if(state === 'login') {
+        await login({email, password})
+      } else {
+        await signup({username, email, password})
+      }
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Something went wrong'
+      toast.error(msg)
     }
     setIsSubmitting(false);
   }

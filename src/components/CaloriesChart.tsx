@@ -34,7 +34,7 @@ const CaloriesChart = () => {
     const data = getData();
 
     return (
-        <div className="w-full h-[300px] mt-4">
+        <div className="w-full h-[300px] mt-4" style={{ minWidth: 0 }}>
             <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" className="dark:stroke-slate-700" />

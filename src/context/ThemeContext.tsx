@@ -7,7 +7,7 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
-export function Themeprovider({children}: {children: React.ReactNode}) {
+export function ThemeProvider({children}: {children: React.ReactNode}) {
     const [theme, setTheme] = useState(() =>localStorage.getItem('theme') || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"));
 
     useEffect(() => {

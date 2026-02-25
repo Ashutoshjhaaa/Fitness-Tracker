@@ -86,6 +86,8 @@ export type AppContextType = {
     setAllFoodLogs: React.Dispatch<React.SetStateAction<FoodEntry[]>>;
     allActivityLogs: ActivityEntry[];
     setAllActivityLogs: React.Dispatch<React.SetStateAction<ActivityEntry[]>>;
+    fetchFoodLogs: () => Promise<void>;
+    fetchActivityLogs: () => Promise<void>;
 };
 
 export const initialState: AppContextType = {
@@ -102,4 +104,6 @@ export const initialState: AppContextType = {
     setAllFoodLogs: () => {},
     allActivityLogs: [],
     setAllActivityLogs: () => {},
+    fetchFoodLogs: async () => {},
+    fetchActivityLogs: async () => {},
 };
