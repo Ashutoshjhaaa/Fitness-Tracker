@@ -5,17 +5,26 @@
 
 const BASE_URL = 'http://localhost:1337';
 
-const getToken = () => localStorage.getItem('token');
+const getToken = () => {
+    const token = localStorage.getItem('token');
+    if (!token || token === 'null' || token === 'undefined') return null;
+    return token;
+};
 
-const authHeaders = () => ({
-    'Content-Type': 'application/json',
-    ...(getToken() ? { Authorization: `Bearer ${getToken()}` } : {}),
-});
+const authHeaders = () => {
+    const token = getToken();
+    return {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    };
+};
 
 async function handleResponse(res: Response) {
     const json = await res.json();
     if (!res.ok) {
-        throw new Error(json?.error?.message || `Request failed: ${res.status}`);
+        console.error(`Strapi Error [${res.status}]:`, json);
+        const message = json?.error?.message || `Request failed with status ${res.status}`;
+        throw new Error(message);
     }
     return json;
 }

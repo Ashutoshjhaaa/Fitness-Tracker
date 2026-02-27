@@ -16,6 +16,7 @@ const Profile = () => {
   const [isLoadingDiet, setIsLoadingDiet] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
+
   const [editData, setEditData] = useState({
     age: user?.age ?? 0,
     weight: user?.weight ?? 0,
